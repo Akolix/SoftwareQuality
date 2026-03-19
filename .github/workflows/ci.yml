@@ -2,9 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: 
+      - main
+      - master
+      - 'observer-pattern'
+      - 'strategy-pattern'
+      - 'factory-pattern'
   pull_request:
-    branches: [ main, master ]
+    branches: 
+      - main
+      - master
 
 jobs:
   build:
@@ -26,7 +33,7 @@ jobs:
       
       - name: Run tests
         run: mvn test
-
+      
       - name: Generate coverage report
         run: mvn jacoco:report
       
