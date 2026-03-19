@@ -15,9 +15,10 @@ import javax.swing.JFrame;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @version 2.0 2026/03/19 Ian Donker
  */
 
-public class SlideViewerComponent extends JComponent {
+public class SlideViewerComponent extends JComponent implements PresentationObserver {
 		
 	private Slide slide; // current slide
 	private Font labelFont = null; // font for labels
@@ -39,10 +40,22 @@ public class SlideViewerComponent extends JComponent {
 		presentation = pres;
 		labelFont = new Font(FONTNAME, FONTSTYLE, FONTHEIGHT);
 		this.frame = frame;
+
+		pres.addObserver(this);
 	}
 
 	public Dimension getPreferredSize() {
 		return new Dimension(Slide.WIDTH, Slide.HEIGHT);
+	}
+
+	@Override
+	public void onSlideChanged(Presentation presentation, Slide currentSlide) {
+		this.presentation = presentation;
+		this.slide = currentSlide;
+		repaint();
+		if (frame != null && presentation != null) {
+			frame.setTitle(presentation.getTitle());
+		}
 	}
 
 	public void update(Presentation presentation, Slide data) {
