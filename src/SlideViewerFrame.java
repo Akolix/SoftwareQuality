@@ -12,6 +12,7 @@ import javax.swing.JFrame;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @version 2.0 2026/03/19 Ian Donker
 */
 
 public class SlideViewerFrame extends JFrame {
@@ -24,7 +25,6 @@ public class SlideViewerFrame extends JFrame {
 	public SlideViewerFrame(String title, Presentation presentation) {
 		super(title);
 		SlideViewerComponent slideViewerComponent = new SlideViewerComponent(presentation, this);
-		presentation.setShowView(slideViewerComponent);
 		setupWindow(slideViewerComponent, presentation);
 	}
 
