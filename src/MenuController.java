@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @version 2.0 2026/03/19 Ian Donker
  */
 public class MenuController extends MenuBar {
 	
