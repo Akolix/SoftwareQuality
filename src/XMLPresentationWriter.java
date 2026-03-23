@@ -33,22 +33,17 @@ public class XMLPresentationWriter implements PresentationWriter {
             out.println("<slide>");
             out.println("<title>" + slide.getTitle() + "</title>");
             Vector<SlideItem> slideItems = slide.getSlideItems();
+
             for (int itemNumber = 0; itemNumber < slideItems.size(); itemNumber++) {
                 SlideItem slideItem = slideItems.elementAt(itemNumber);
-                out.print("<item kind=");
-                if (slideItem instanceof TextItem) {
-                    out.print("\"text\" level=\"" + slideItem.getLevel() + "\">");
-                    out.print(((TextItem) slideItem).getText());
-                }
-                else {
-                    if (slideItem instanceof BitmapItem) {
-                        out.print("\"image\" level=\"" + slideItem.getLevel() + "\">");
-                        out.print(((BitmapItem) slideItem).getName());
-                    }
-                    else {
-                        System.out.println("Ignoring " + slideItem);
-                    }
-                }
+
+                //Polymorphism instead of instacenof
+                out.print("<item kind=\"");
+                out.print(slideItem.getType());
+                out.print("\" level=\"");
+                out.print(slideItem.getLevel());
+                out.print("\">");
+                out.print(slideItem.getContent());
                 out.println("</item>");
             }
             out.println("</slide>");

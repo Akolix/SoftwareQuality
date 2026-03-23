@@ -24,6 +24,8 @@ import org.w3c.dom.NodeList;
  */
 public class XMLPresentationReader implements PresentationReader {
 
+    private SlideItemFactory factory;
+
     protected static final String SHOWTITLE = "showtitle";
     protected static final String SLIDETITLE = "title";
     protected static final String SLIDE = "slide";
@@ -40,6 +42,14 @@ public class XMLPresentationReader implements PresentationReader {
     private String getTitle(Element element, String tagName) {
         NodeList titles = element.getElementsByTagName(tagName);
         return titles.item(0).getTextContent();
+    }
+
+    public XMLPresentationReader() {
+        this.factory = new SlideItemFactory();
+    }
+
+    public XMLPresentationReader(SlideItemFactory factory) {
+        this.factory = factory;
     }
 
     @Override
@@ -98,17 +108,15 @@ public class XMLPresentationReader implements PresentationReader {
                 System.err.println(NFE);
             }
         }
+
         String type = attributes.getNamedItem(KIND).getTextContent();
-        if (TEXT.equals(type)) {
-            slide.append(new TextItem(level, item.getTextContent()));
-        }
-        else {
-            if (IMAGE.equals(type)) {
-                slide.append(new BitmapItem(level, item.getTextContent()));
-            }
-            else {
-                System.err.println(UNKNOWNTYPE);
-            }
+        String content = item.getTextContent();
+
+        try {
+            SlideItem slideItem = factory.createItem(type, level, content);
+            slide.append(slideItem);
+        } catch (IllegalArgumentException e) {
+            System.err.println(UNKNOWNTYPE + ": " + type);
         }
     }
 }

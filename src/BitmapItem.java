@@ -18,6 +18,7 @@ import java.io.IOException;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @version 2.0 2026/03/23 Sylvia Stuurman
 */
 
 public class BitmapItem extends SlideItem {
@@ -37,6 +38,16 @@ public class BitmapItem extends SlideItem {
 		catch (IOException e) {
 			System.err.println(FILE + imageName + NOTFOUND) ;
 		}
+	}
+
+	@Override
+	public String getType() {
+		return "image";
+	}
+
+	@Override
+	public String getContent() {
+		return getName();
 	}
 
 // An empty bitmap-item

@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @version 2.0 2026/03/23 Ian Donker
  */
 
 public class TextItem extends SlideItem {
@@ -29,10 +30,20 @@ public class TextItem extends SlideItem {
 	
 	private static final String EMPTYTEXT = "No Text Given";
 
-// a textitem of level level, with the text string
+// a textitem of level, with the text string
 	public TextItem(int level, String string) {
 		super(level);
 		text = string;
+	}
+
+	@Override
+	public String getType() {
+		return "text";
+	}
+
+	@Override
+	public String getContent() {
+		return getText();
 	}
 
 // an empty textitem
