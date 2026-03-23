@@ -9,7 +9,10 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-/** <p>The controller for the menu</p>
+/**
+ * The controller for the menu.
+ * Now uses Strategy pattern with PresentationReader and PresentationWriter.
+ *
  * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
  * @version 1.1 2002/12/17 Gert Florijn
  * @version 1.2 2003/11/19 Sylvia Stuurman
@@ -17,15 +20,17 @@ import javax.swing.JOptionPane;
  * @version 1.4 2007/07/16 Sylvia Stuurman
  * @version 1.5 2010/03/03 Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
- * @version 2.0 2026/03/19 Ian Donker
+ * @version 2.0 Ian Donker
  */
 public class MenuController extends MenuBar {
-	
-	private Frame parent; // the frame, only used as parent for the Dialogs
-	private Presentation presentation; // Commands are given to the presentation
-	
+
+	private Frame parent;
+	private Presentation presentation;
+	private PresentationReader reader;
+	private PresentationWriter writer;
+
 	private static final long serialVersionUID = 227L;
-	
+
 	protected static final String ABOUT = "About";
 	protected static final String FILE = "File";
 	protected static final String EXIT = "Exit";
@@ -38,34 +43,44 @@ public class MenuController extends MenuBar {
 	protected static final String PREV = "Prev";
 	protected static final String SAVE = "Save";
 	protected static final String VIEW = "View";
-	
+
 	protected static final String TESTFILE = "test.xml";
 	protected static final String SAVEFILE = "dump.xml";
-	
+
 	protected static final String IOEX = "IO Exception: ";
 	protected static final String LOADERR = "Load Error";
 	protected static final String SAVEERR = "Save Error";
 
-	public MenuController(Frame frame, Presentation pres) {
-		parent = frame;
-		presentation = pres;
+	// Constructor now accepts strategy interfaces
+	public MenuController(Frame frame, Presentation pres,
+						  PresentationReader reader, PresentationWriter writer) {
+		this.parent = frame;
+		this.presentation = pres;
+		this.reader = reader;
+		this.writer = writer;
+
+		buildMenu();
+	}
+
+	private void buildMenu() {
 		MenuItem menuItem;
+
 		Menu fileMenu = new Menu(FILE);
 		fileMenu.add(menuItem = mkMenuItem(OPEN));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				presentation.clear();
-				Accessor xmlAccessor = new XMLAccessor();
 				try {
-					xmlAccessor.loadFile(presentation, TESTFILE);
+					reader.load(presentation, TESTFILE);
 					presentation.setSlideNumber(0);
 				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(parent, IOEX + exc, 
-         			LOADERR, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(parent, IOEX + exc,
+							LOADERR, JOptionPane.ERROR_MESSAGE);
 				}
 				parent.repaint();
 			}
-		} );
+		});
+
 		fileMenu.add(menuItem = mkMenuItem(NEW));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -73,18 +88,19 @@ public class MenuController extends MenuBar {
 				parent.repaint();
 			}
 		});
+
 		fileMenu.add(menuItem = mkMenuItem(SAVE));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Accessor xmlAccessor = new XMLAccessor();
 				try {
-					xmlAccessor.saveFile(presentation, SAVEFILE);
+					writer.save(presentation, SAVEFILE);
 				} catch (IOException exc) {
-					JOptionPane.showMessageDialog(parent, IOEX + exc, 
+					JOptionPane.showMessageDialog(parent, IOEX + exc,
 							SAVEERR, JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
+
 		fileMenu.addSeparator();
 		fileMenu.add(menuItem = mkMenuItem(EXIT));
 		menuItem.addActionListener(new ActionListener() {
@@ -93,6 +109,7 @@ public class MenuController extends MenuBar {
 			}
 		});
 		add(fileMenu);
+
 		Menu viewMenu = new Menu(VIEW);
 		viewMenu.add(menuItem = mkMenuItem(NEXT));
 		menuItem.addActionListener(new ActionListener() {
@@ -100,12 +117,14 @@ public class MenuController extends MenuBar {
 				presentation.nextSlide();
 			}
 		});
+
 		viewMenu.add(menuItem = mkMenuItem(PREV));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				presentation.prevSlide();
 			}
 		});
+
 		viewMenu.add(menuItem = mkMenuItem(GOTO));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -115,6 +134,7 @@ public class MenuController extends MenuBar {
 			}
 		});
 		add(viewMenu);
+
 		Menu helpMenu = new Menu(HELP);
 		helpMenu.add(menuItem = mkMenuItem(ABOUT));
 		menuItem.addActionListener(new ActionListener() {
@@ -122,10 +142,9 @@ public class MenuController extends MenuBar {
 				AboutBox.show(parent);
 			}
 		});
-		setHelpMenu(helpMenu);		// needed for portability (Motif, etc.).
+		setHelpMenu(helpMenu);
 	}
 
-// create a menu item
 	public MenuItem mkMenuItem(String name) {
 		return new MenuItem(name, new MenuShortcut(name.charAt(0)));
 	}
