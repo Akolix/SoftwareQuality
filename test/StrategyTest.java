@@ -11,7 +11,7 @@ import java.nio.file.Path;
 /**
  * Tests for Strategy Pattern implementation
  */
-class StrategyPatternTest {
+class StrategyTest {
     private Presentation presentation;
 
     @BeforeEach
